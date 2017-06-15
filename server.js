@@ -10,9 +10,24 @@ let db;
 
 app.use(express.static('static'));
 
-/* 
+/*
  * Get a list of filtered records
  */
+app.get('/api/swapi', function(req, res) {
+    res.send('http://swapi.co/api/'),
+    function(error, response, body) {
+      if (!error && response.statusCode === 200) {
+        console.log(body);
+        res.json(body);
+      } else {
+        res.json(error);
+      }
+    };
+});
+
+
+
+
 app.get('/api/bugs', function(req, res) {
   console.log("Query string", req.query);
   let filter = {};
