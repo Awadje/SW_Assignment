@@ -4,6 +4,8 @@ let express = require('express');
 let bodyParser = require('body-parser');
 let MongoClient = require('mongodb').MongoClient;
 let ObjectId = require('mongodb').ObjectID;
+let http = require('http');
+
 
 let app = express();
 let db;
@@ -13,18 +15,20 @@ app.use(express.static('static'));
 /*
  * Get a list of filtered records
  */
-app.get('/api/swapi', function(req, res) {
-    res.send('http://swapi.co/api/'),
-    function(error, response, body) {
-      if (!error && response.statusCode === 200) {
-        console.log(body);
-        res.json(body);
-      } else {
-        res.json(error);
-      }
-    };
-});
+http.get('http://swapi.co/api/', function(res){
+    var body = '';
 
+    res.on('data', function(chunk){
+        body += chunk;
+    });
+
+    res.on('end', function(){
+        var swapiResponse = JSON.parse(body);
+        console.log("Got a response: ", swapiResponse);
+    });
+}).on('error', function(e){
+      console.log("Got an error: ", e);
+});
 
 
 
@@ -40,6 +44,7 @@ app.get('/api/bugs', function(req, res) {
     res.json(docs);
   });
 });
+
 
 app.use(bodyParser.json());
 
