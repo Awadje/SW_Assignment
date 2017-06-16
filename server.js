@@ -5,30 +5,63 @@ let bodyParser = require('body-parser');
 let MongoClient = require('mongodb').MongoClient;
 let ObjectId = require('mongodb').ObjectID;
 let http = require('http');
-
+const swapi = require('swapi-node');
+const request = require('request-promise');
 
 let app = express();
 let db;
 
-app.use(express.static('static'));
+swapi.get('http://swapi.co/api/people/?page=2').then((result) => {
+    console.log(result.results);
+});
 
+app.use(express.static('static'));
 /*
  * Get a list of filtered records
  */
-http.get('http://swapi.co/api/', function(res){
-    var body = '';
+ const makeRequest = request.defaults({
+   baseUrl: 'http://swapi.co/api/people/?page=2',
+   json: true
+ });
 
-    res.on('data', function(chunk){
-        body += chunk;
-    });
+ const speciesService = {
+   find(params) {
+     return makeRequest(`/`);
+   },
 
-    res.on('end', function(){
-        var swapiResponse = JSON.parse(body);
-        console.log("Got a response: ", swapiResponse);
-    });
-}).on('error', function(e){
-      console.log("Got an error: ", e);
-});
+   get(id, params) {
+     return makeRequest(`/${id}`);
+   },
+ };
+
+ app.get('/api/swapi', function(req, resp) {
+
+  http.get('http://swapi.co/api/', function(res, body){
+      var body = '';
+
+      res.on('data', function(chunk){
+          body += chunk;
+      });
+
+      res.on('end', function(){
+          app.use(bodyParser.json());
+          var swapiResponse = JSON.parse(body);
+          console.log("Got a response: ", swapiResponse);
+          resp.send(swapiResponse)
+      });
+  }).on('error', function(e){
+        console.log("Got an error: ", e);
+  });
+ });
+
+ // app.get('api/swapi', (req, res) => {
+ //   console.log('true')
+ //   swapi.get('http://swapi.co/api/people/?page=2').then((result) => {
+ //     res.json(result);
+ //     console.log('success');
+ //   });
+ // })
+
 
 
 
@@ -46,7 +79,7 @@ app.get('/api/bugs', function(req, res) {
 });
 
 
-app.use(bodyParser.json());
+
 
 /*
  * Insert a record

@@ -30,7 +30,9 @@
     "bootstrap": "^3.3.6",
     "express": "^4.13.4",
     "mongodb": "^2.1.14",
-    "request-promise": "^4.2.1"
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1",
+    "swapi-node": "^0.4.1"
   },
   "devDependencies": {
     "babel-cli": "^6.6.5",
