@@ -5,34 +5,12 @@ let bodyParser = require('body-parser');
 let MongoClient = require('mongodb').MongoClient;
 let ObjectId = require('mongodb').ObjectID;
 let http = require('http');
-const swapi = require('swapi-node');
-const request = require('request-promise');
 
 let app = express();
 let db;
 
-swapi.get('http://swapi.co/api/people/?page=2').then((result) => {
-    console.log(result.results);
-});
 
 app.use(express.static('static'));
-/*
- * Get a list of filtered records
- */
- const makeRequest = request.defaults({
-   baseUrl: 'http://swapi.co/api/people/?page=2',
-   json: true
- });
-
- const speciesService = {
-   find(params) {
-     return makeRequest(`/`);
-   },
-
-   get(id, params) {
-     return makeRequest(`/${id}`);
-   },
- };
 
  app.get('/api/swapi', function(req, resp) {
 
@@ -54,16 +32,6 @@ app.use(express.static('static'));
   });
  });
 
- // app.get('api/swapi', (req, res) => {
- //   console.log('true')
- //   swapi.get('http://swapi.co/api/people/?page=2').then((result) => {
- //     res.json(result);
- //     console.log('success');
- //   });
- // })
-
-
-
 
 app.get('/api/bugs', function(req, res) {
   console.log("Query string", req.query);
@@ -78,12 +46,6 @@ app.get('/api/bugs', function(req, res) {
   });
 });
 
-
-
-
-/*
- * Insert a record
- */
 app.post('/api/bugs/', function(req, res) {
   console.log("Req body:", req.body);
   let newBug = req.body;
